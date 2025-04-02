@@ -1,0 +1,23 @@
+# Server Properties
+server:
+  port: 9000
+  servlet:
+    context-path: /store
+
+#logging
+logging:
+  info:
+    path: ./target/log
+    name: info
+  error:
+    path: ./target/log
+    name: error
+
+# Swagger activation
+springdoc:
+  api-docs:
+    enabled: true
+    path: /swagger-ui/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
