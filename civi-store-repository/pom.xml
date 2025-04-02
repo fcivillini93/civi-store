@@ -13,6 +13,10 @@
     <artifactId>civi-store-repository</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <modules>
+        <module>civi-store-repository-interface</module>
+        <module>civi-store-repository-rdbms</module>
+    </modules>
 
     <dependencies>
         <!--civi-store-->

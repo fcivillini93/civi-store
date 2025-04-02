@@ -14,7 +14,6 @@
         <module>civi-store-core</module>
         <module>civi-store-controller</module>
         <module>civi-store-boot</module>
-        <module>civi-store-repository/civi-store-repository-interface</module>
     </modules>
 
     <properties>
@@ -26,6 +25,7 @@
         <commonsIo.version>2.18.0</commonsIo.version>
         <commonsLang.version>3.17.0</commonsLang.version>
         <slf4j.version>2.0.16</slf4j.version>
+        <mariaDb.version>3.5.3</mariaDb.version>
 
         <springBoot.version>3.4.3</springBoot.version>
         <spring.version>6.2.3</spring.version>
@@ -37,7 +37,7 @@
 
         <mockito.version>5.16.0</mockito.version>
         <junit.jupiter.version>5.12.0</junit.jupiter.version>
-        <testcontainer.version>1.19.3</testcontainer.version>
+        <h2.version>2.3.232</h2.version>
     </properties>
 
     <dependencies>
