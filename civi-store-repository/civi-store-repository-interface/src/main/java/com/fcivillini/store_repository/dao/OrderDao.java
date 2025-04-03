@@ -11,15 +11,12 @@ import java.util.List;
 public class OrderDao {
 
     private Long id;
-
     private UserDao user;
-
     private String description;
-
     private LocalDateTime orderDate;
-
     private OrderStatusDao status;
-
     private List<OrderItemDao> items;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }
 
