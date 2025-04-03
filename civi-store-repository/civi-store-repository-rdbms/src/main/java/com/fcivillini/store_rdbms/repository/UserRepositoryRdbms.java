@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -37,5 +39,10 @@ public class UserRepositoryRdbms implements UserRepository {
     @Override
     public void deleteById(Long id) {
         repositoryJpa.deleteById(id);
+    }
+
+    @Override
+    public List<UserDao> findAll() {
+        return repositoryJpa.findAll().stream().map(userMapper::fromRdbms).collect(Collectors.toList());
     }
 }
