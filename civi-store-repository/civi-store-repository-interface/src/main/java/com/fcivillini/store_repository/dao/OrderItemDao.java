@@ -13,7 +13,7 @@ public class OrderItemDao {
 
     private ProductDao product;
 
-    private int quantity;
+    private Integer quantity;
 
     private LocalDateTime createdDate;
 

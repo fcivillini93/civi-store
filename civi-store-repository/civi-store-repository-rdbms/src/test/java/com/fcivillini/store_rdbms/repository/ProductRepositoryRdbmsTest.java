@@ -13,9 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProductRepositoryRdbmsTest extends AbstractRepositoryRdbmsTest {
 
-    @Autowired
-    private ProductRepository productRepository;
-
     @Test
     void testSaveAndFindById() {
         ProductDao product = new ProductDao()

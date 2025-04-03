@@ -5,13 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.fcivillini</groupId>
-        <artifactId>civi-store</artifactId>
+        <artifactId>civi-store-repository</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>civi-store-repository-interface</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+
+    <dependencies>
+    </dependencies>
 
 
 </project>

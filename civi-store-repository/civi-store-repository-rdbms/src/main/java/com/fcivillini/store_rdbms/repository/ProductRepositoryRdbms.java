@@ -22,20 +22,20 @@ public class ProductRepositoryRdbms implements ProductRepository {
     private ProductMapperRdbms productMapper;
 
     @Autowired
-    private ProductRepositoryJpa productRepositoryJpa;
+    private ProductRepositoryJpa repositoryJpa;
 
     @Override
     public Optional<ProductDao> findById(Long id) {
-        return productRepositoryJpa.findById(id).map(p -> productMapper.fromRdbms(p));
+        return repositoryJpa.findById(id).map(p -> productMapper.fromRdbms(p));
     }
 
     @Override
     public ProductDao save(ProductDao product) {
-        return productMapper.fromRdbms(productRepositoryJpa.save(productMapper.toRdbms(product)));
+        return productMapper.fromRdbms(repositoryJpa.save(productMapper.toRdbms(product)));
     }
 
     @Override
     public void deleteById(Long id) {
-
+        repositoryJpa.deleteById(id);
     }
 }
