@@ -1,5 +1,6 @@
 package com.fcivillini.store_rdbms.repository;
 
+import com.fcivillini.store_rdbms.mapper.OrderMapperRdbms;
 import com.fcivillini.store_rdbms.repository.jpa.OrderRepositoryJpa;
 import com.fcivillini.store_repository.dao.OrderDao;
 import com.fcivillini.store_repository.repository.OrderRepository;
@@ -18,6 +19,9 @@ import java.util.Optional;
 @Setter
 @Accessors(chain = true)
 public class OrderRepositoryRdbms implements OrderRepository {
+
+    @Autowired
+    private OrderMapperRdbms orderMapper;
 
     @Autowired
     private OrderRepositoryJpa orderRepositoryJpa;

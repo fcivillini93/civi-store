@@ -1,5 +1,6 @@
 package com.fcivillini.store_rdbms.repository;
 
+import com.fcivillini.store_rdbms.mapper.ProductMapperRdbms;
 import com.fcivillini.store_rdbms.repository.jpa.ProductRepositoryJpa;
 import com.fcivillini.store_repository.dao.ProductDao;
 import com.fcivillini.store_repository.repository.ProductRepository;
@@ -18,16 +19,19 @@ import java.util.Optional;
 public class ProductRepositoryRdbms implements ProductRepository {
 
     @Autowired
-    private ProductRepositoryJpa productRepositoryRdbms;
+    private ProductMapperRdbms productMapper;
+
+    @Autowired
+    private ProductRepositoryJpa productRepositoryJpa;
 
     @Override
     public Optional<ProductDao> findById(Long id) {
-        return Optional.empty();
+        return productRepositoryJpa.findById(id).map(p -> productMapper.fromRdbms(p));
     }
 
     @Override
-    public ProductDao save(ProductDao order) {
-        return null;
+    public ProductDao save(ProductDao product) {
+        return productMapper.fromRdbms(productRepositoryJpa.save(productMapper.toRdbms(product)));
     }
 
     @Override
