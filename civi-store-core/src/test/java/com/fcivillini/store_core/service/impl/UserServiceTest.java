@@ -1,8 +1,7 @@
-package com.fcivillini.store_core.service;
+package com.fcivillini.store_core.service.impl;
 
 import com.fcivillini.store_core.mapper.UserMapper;
 import com.fcivillini.store_core.model.User;
-import com.fcivillini.store_core.service.impl.UserServiceImpl;
 import com.fcivillini.store_interface.exc.StoreException;
 import com.fcivillini.store_repository.dao.UserDao;
 import com.fcivillini.store_repository.repository.UserRepository;

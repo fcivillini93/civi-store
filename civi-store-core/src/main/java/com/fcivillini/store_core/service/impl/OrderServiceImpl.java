@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
         Order storedOrder = this.findById(order.getId());
         Map<Long, Product> productMap = Stream.concat(order.getItems().stream(), storedOrder.getItems().stream())
                 .map(OrderItem::getProduct)
-                .collect(Collectors.toMap(Product::getId, p -> p));
+                .collect(Collectors.toMap(Product::getId, p -> p, (p1, p2) -> p1));
         applyStockChanges(productMap, evaluateStockDiff(storedOrder.getItems(), order.getItems()));
         Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order)));
         log.info("end to update order with ID: {}", saved.getId());

@@ -1,8 +1,7 @@
-package com.fcivillini.store_core.service;
+package com.fcivillini.store_core.service.impl;
 
 import com.fcivillini.store_core.mapper.ProductMapper;
 import com.fcivillini.store_core.model.Product;
-import com.fcivillini.store_core.service.impl.ProductServiceImpl;
 import com.fcivillini.store_interface.exc.StoreException;
 import com.fcivillini.store_repository.dao.ProductDao;
 import com.fcivillini.store_repository.repository.ProductRepository;
