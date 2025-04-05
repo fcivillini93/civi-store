@@ -13,7 +13,7 @@ public interface OrderService {
 
     Order findById(Long id) throws StoreException;
 
-    List<Order> findOrders(LocalDate date, String name, String description) throws StoreException;
+    List<Order> findOrders(LocalDate date, Long userId, String description) throws StoreException;
 
     void deleteById(Long id) throws StoreException;
 }

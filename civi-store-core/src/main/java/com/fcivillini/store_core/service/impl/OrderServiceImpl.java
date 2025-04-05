@@ -90,13 +90,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findOrders(LocalDate date, String name, String description) throws StoreException {
-        log.info("start to find orders with date: [{}], name: [{}], description: [{}]", date, name, description);
-        List<Order> result = orderRepository.findOrders(date, name, description)
+    public List<Order> findOrders(LocalDate date, Long userId, String description) throws StoreException {
+        log.info("start to find orders with date: [{}], user: [{}], description: [{}]", date, userId, description);
+        List<Order> result = orderRepository.findOrders(date, userId, description)
                 .stream()
                 .map(orderMapper::fromDao)
                 .collect(Collectors.toList());
-        log.info("end to find orders with date: [{}], name: [{}], description: [{}]", date, name, description);
+        log.info("end to find orders with date: [{}], user: [{}], description: [{}]", date, userId, description);
         return result;
     }
 

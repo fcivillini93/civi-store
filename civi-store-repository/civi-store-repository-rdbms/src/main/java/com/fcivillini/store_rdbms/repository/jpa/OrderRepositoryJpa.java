@@ -13,14 +13,14 @@ import java.util.List;
 public interface OrderRepositoryJpa extends JpaRepository<OrderRdbms, Long> {
 
     @Query("""
-        SELECT o FROM OrderRdbms o 
-        WHERE (:date IS NULL OR FUNCTION('DATE', o.orderDate) = :date)
-        AND (:name IS NULL OR LOWER(o.user.name) LIKE LOWER(CONCAT('%', :name, '%')))
-        AND (:description IS NULL OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')))
-    """)
+                SELECT o FROM OrderRdbms o 
+                WHERE (:date IS NULL OR FUNCTION('DATE', o.orderDate) = :date)
+                AND (:userId IS NULL OR o.user.id = :userId)
+                AND (:description IS NULL OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')))
+            """)
     List<OrderRdbms> findOrders(
             @Param("date") LocalDate date,
-            @Param("name") String name,
+            @Param("userId") Long userId,
             @Param("description") String description
     );
 }

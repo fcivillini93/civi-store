@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -34,8 +33,8 @@ public class OrderRepositoryRdbms implements OrderRepository {
     }
 
     @Override
-    public List<OrderDao> findOrders(LocalDate date, String name, String description) throws StoreException {
-        throw new StoreException("Not implemented yet", HttpStatus.NOT_IMPLEMENTED);
+    public List<OrderDao> findOrders(LocalDate date, Long userId, String description) throws StoreException {
+        return repositoryJpa.findOrders(date, userId, description).stream().map(o -> orderMapper.fromRdbms(o)).toList();
     }
 
     @Override

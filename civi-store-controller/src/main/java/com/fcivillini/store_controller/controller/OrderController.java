@@ -42,9 +42,9 @@ public class OrderController implements OrderProvider {
     }
 
     @Override
-    public ResponseEntity<List<OrderDto>> findOrders(LocalDate date, String name, String description) throws StoreException {
+    public ResponseEntity<List<OrderDto>> findOrders(LocalDate date, Long userId, String description) throws StoreException {
         return new ResponseEntity<>(
-                orderService.findOrders(date, name, description).stream()
+                orderService.findOrders(date, userId, description).stream()
                         .map(orderMapper::toDto)
                         .collect(Collectors.toList()), HttpStatus.OK);
     }

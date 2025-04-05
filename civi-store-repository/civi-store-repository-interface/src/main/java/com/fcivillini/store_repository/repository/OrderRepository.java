@@ -1,7 +1,7 @@
 package com.fcivillini.store_repository.repository;
 
-import com.fcivillini.store_repository.dao.OrderDao;
 import com.fcivillini.store_interface.exc.StoreException;
+import com.fcivillini.store_repository.dao.OrderDao;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +11,7 @@ public interface OrderRepository {
 
     Optional<OrderDao> findById(Long id);
 
-    List<OrderDao> findOrders(LocalDate date, String name, String description) throws StoreException;
+    List<OrderDao> findOrders(LocalDate date, Long userId, String description) throws StoreException;
 
     OrderDao save(OrderDao order);
 

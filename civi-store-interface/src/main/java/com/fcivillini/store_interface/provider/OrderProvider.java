@@ -25,7 +25,7 @@ public interface OrderProvider {
     @GetMapping
     public ResponseEntity<List<OrderDto>> findOrders(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long userId,
             @RequestParam(required = false) String description) throws StoreException;
 
     @DeleteMapping("/{id}")
