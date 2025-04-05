@@ -37,6 +37,13 @@ public class ProductRepositoryRdbms implements ProductRepository {
     }
 
     @Override
+    public List<ProductDao> saveAll(List<ProductDao> productList) {
+        return repositoryJpa.saveAll(productList.stream().map(p->productMapper.toRdbms(p)).toList()).stream()
+                .map(p -> productMapper.fromRdbms(p))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         repositoryJpa.deleteById(id);
     }

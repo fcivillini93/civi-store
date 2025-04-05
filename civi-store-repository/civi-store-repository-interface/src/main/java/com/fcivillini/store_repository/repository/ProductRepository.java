@@ -11,6 +11,8 @@ public interface ProductRepository {
 
     ProductDao save(ProductDao order);
 
+    List<ProductDao> saveAll(List<ProductDao> productList);
+
     void deleteById(Long id);
 
     List<ProductDao> findAll();
