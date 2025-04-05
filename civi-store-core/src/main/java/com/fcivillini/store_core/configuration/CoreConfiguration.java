@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({
-        CoreMapperConfiguration.class
+        CoreMapperConfiguration.class,
+        CoreServiceConfiguration.class
 })
 public class CoreConfiguration {
 }
