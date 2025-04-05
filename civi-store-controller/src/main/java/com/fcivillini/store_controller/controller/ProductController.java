@@ -33,7 +33,7 @@ public class ProductController implements ProductProvider {
     }
 
     @Override
-    public ResponseEntity<ProductDto> updateProduct(ProductDto dto) {
+    public ResponseEntity<ProductDto> updateProduct(ProductDto dto) throws StoreException {
         return new ResponseEntity<>(productMapper.toDto(productService.update(productMapper.fromDto(dto))), HttpStatus.OK);
     }
 

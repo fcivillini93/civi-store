@@ -34,7 +34,7 @@ public interface ProductProvider {
             @ApiResponse(responseCode = "404", description = "Product not found",
                     content = @Content)})
     @PutMapping()
-    ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto dto);
+    ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto dto) throws StoreException;
 
     @Operation(summary = "Get a product by ID")
     @ApiResponses(value = {
