@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,27 +46,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order) throws StoreException {
         log.info("Creating new order");
+        ;
+
         Map<Long, Product> productMap = order.getItems().stream()
                 .map(OrderItem::getProduct)
                 .collect(Collectors.toMap(Product::getId, p -> p));
         applyStockChanges(productMap, evaluateStockDiff(List.of(), order.getItems()));
-        Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order)));
+        Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order.setOrderDate(LocalDateTime.now()))));
         log.info("Order created with ID: {}", saved.getId());
         return saved;
     }
 
     @Override
     public Order update(Order order) throws StoreException {
-        log.info("start to update order with ID: [{}]", order.getId());
+        log.info("Start to update order with ID: [{}]", order.getId());
+
         Order storedOrder = this.findById(order.getId());
+
         Map<Long, Product> productMap = Stream.concat(order.getItems().stream(), storedOrder.getItems().stream())
                 .map(OrderItem::getProduct)
                 .collect(Collectors.toMap(Product::getId, p -> p, (p1, p2) -> p1));
         applyStockChanges(productMap, evaluateStockDiff(storedOrder.getItems(), order.getItems()));
-        Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order)));
-        log.info("end to update order with ID: {}", saved.getId());
+        Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order.setOrderDate(LocalDateTime.now()))));
+        log.info("End to update order with ID: {}", saved.getId());
         return saved;
     }
+
 
     @Override
     public void deleteById(Long id) throws StoreException {
