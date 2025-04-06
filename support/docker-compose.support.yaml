@@ -16,10 +16,10 @@ services:
 #    ports:
 #      - "7700:7700"
 #
-#  redis:
-#      image: redis:7.2.4
-#      ports:
-#        - "6379:6379"
-#      environment:
-#        REDIS_PORT: 6379
-#        ALLOW_EMPTY_PASSWORD: yes
+  redis:
+      image: redis:7.2.4
+      ports:
+        - "6379:6379"
+      environment:
+        REDIS_PORT: 6379
+        ALLOW_EMPTY_PASSWORD: yes

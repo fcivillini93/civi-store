@@ -13,7 +13,10 @@ import com.fcivillini.store_repository.repository.ProductRepository;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +38,13 @@ import static java.util.Arrays.asList;
 @Accessors(chain = true)
 public class OrderServiceImpl implements OrderService {
 
+    @Value("${spring.data.redis.lock.wait-time}")
+    private Long lockWaitTime;
+    @Value("${spring.data.redis.lock.lease-time}")
+    private Long lockLLeaseTime;
+
+    @Autowired
+    private RedissonClient redissonClient;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -121,24 +132,56 @@ public class OrderServiceImpl implements OrderService {
 
 
     protected List<Product> applyStockChanges(final Map<Long, Product> storeProductsMap,
-                                              final Map<Long, Integer> stockChanges) throws StoreException {
-        log.info("start to apply stock changes to {}", storeProductsMap.keySet());
-        List<Product> productsToSave = new ArrayList<>();
-        stockChanges.forEach((productId, diff) -> {
-            Product product = storeProductsMap.get(productId);
-            int newStock = product.getStock() + diff;
-            if (newStock < 0) {
-                throw new StoreRuntimeException("Insufficient stock for product " + product.getName(), HttpStatus.BAD_REQUEST);
-            }
-            product.setStock(newStock);
-            productsToSave.add(product);
+                                              final Map<Long, Integer> stockChanges) throws StoreRuntimeException {
+        log.info("Start to apply stock changes to {}", storeProductsMap.keySet());
 
-        });
-        List<Product> result = productRepository.saveAll(productsToSave.stream()
-                        .map(product -> productMapper.toDao(product)).toList()).stream()
-                .map(p -> productMapper.fromDao(p)).collect(Collectors.toList());
-        log.info("end to apply stock changes. Update [{}] products", result.size());
-        return result;
+        List<RLock> acquiredLocks = new ArrayList<>();
+        List<Long> sortedProductIds = storeProductsMap.keySet().stream()
+                .sorted()
+                .toList();
+
+        try {
+            sortedProductIds.forEach(productId -> {
+                RLock lock = redissonClient.getLock("lock:product:" + productId);
+                try {
+                    boolean locked = lock.tryLock(lockWaitTime, lockLLeaseTime, TimeUnit.SECONDS);
+                    if (!locked) {
+                        throw new StoreRuntimeException("Could not acquire lock for product " + productId, HttpStatus.CONFLICT);
+                    }
+                } catch (InterruptedException e) {
+                    throw new StoreRuntimeException("Could not acquire lock for product " + productId + e.getMessage(), HttpStatus.CONFLICT);
+                }
+                acquiredLocks.add(lock);
+            });
+
+            List<Product> updatedProducts = stockChanges.entrySet().stream()
+                    .map(entry -> {
+                        Long productId = entry.getKey();
+                        int diff = entry.getValue();
+                        Product product = storeProductsMap.get(productId);
+                        int newStock = product.getStock() + diff;
+                        if (newStock < 0) {
+                            throw new StoreRuntimeException("Insufficient stock for product " + product.getName(), HttpStatus.BAD_REQUEST);
+                        }
+                        product.setStock(newStock);
+                        return product;
+                    })
+                    .toList();
+
+            return productRepository.saveAll(updatedProducts.stream()
+                            .map(productMapper::toDao)
+                            .toList()).stream()
+                    .map(productMapper::fromDao).toList();
+        } finally {
+            for (RLock lock : acquiredLocks) {
+                try {
+                    lock.unlock();
+                } catch (Exception e) {
+                    log.error("Error releasing lock: {}", e.getMessage(), e);
+                }
+            }
+            log.info("End to apply stock changes. Updated [{}] products", stockChanges.size());
+        }
     }
 
 

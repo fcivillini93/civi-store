@@ -19,10 +19,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,6 +35,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
+    @Mock
+    private RLock rLock;
+    @Mock
+    private RedissonClient redissonClient;
     @Mock
     private OrderRepository orderRepository;
     @Mock
@@ -44,7 +53,10 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        Mockito.clearInvocations(orderRepository, productRepository, orderMapper, productMapper);
+        orderService
+                .setLockWaitTime(3L)
+                .setLockLLeaseTime(5L);
+        Mockito.clearInvocations(orderRepository, productRepository, orderMapper, productMapper, rLock, redissonClient);
     }
 
     @Test
@@ -97,7 +109,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void testSave() throws StoreException {
+    void testSave() throws StoreException, InterruptedException {
         Product product = new Product().setId(1L).setStock(10);
         OrderItem item = new OrderItem().setProduct(product).setQuantity(2);
         Order order = new Order().setItems(List.of(item));
@@ -111,7 +123,8 @@ class OrderServiceTest {
         when(productMapper.toDao(any())).thenReturn(new ProductDao());
         when(productMapper.fromDao(any())).thenReturn(product);
         when(productRepository.saveAll(any())).thenReturn(List.of(new ProductDao()));
-
+        when(redissonClient.getLock(anyString())).thenReturn(rLock);
+        when(rLock.tryLock(3L, 5L, TimeUnit.SECONDS)).thenReturn(true);
         Order result = orderService.save(order);
 
         assertEquals(savedOrder, result);
@@ -120,7 +133,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void testUpdate() throws StoreException {
+    void testUpdate() throws StoreException, InterruptedException {
         Long id = 1L;
 
         Product p1 = new Product().setId(1L).setStock(20);
@@ -146,7 +159,8 @@ class OrderServiceTest {
         when(productMapper.toDao(any())).thenReturn(new ProductDao());
         when(productMapper.fromDao(any())).thenReturn(p2);
         when(productRepository.saveAll(any())).thenReturn(List.of(new ProductDao()));
-
+        when(redissonClient.getLock(anyString())).thenReturn(rLock);
+        when(rLock.tryLock(3L, 5L, TimeUnit.SECONDS)).thenReturn(true);
         Order result = orderService.update(newOrder);
 
         assertEquals(updatedOrder, result);
@@ -154,7 +168,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void testDeleteById() throws StoreException {
+    void testDeleteById() throws StoreException, InterruptedException {
         Long id = 1L;
 
         Product product = new Product().setId(1L).setStock(5);
@@ -168,17 +182,21 @@ class OrderServiceTest {
         when(productMapper.toDao(any())).thenReturn(new ProductDao());
         when(productMapper.fromDao(any())).thenReturn(product);
         when(productRepository.saveAll(any())).thenReturn(List.of(new ProductDao()));
-
+        when(redissonClient.getLock(anyString())).thenReturn(rLock);
+        when(rLock.tryLock(3L, 5L, TimeUnit.SECONDS)).thenReturn(true);
         orderService.deleteById(id);
 
         verify(orderRepository).deleteById(id);
     }
 
     @Test
-    void testApplyStockChanges_shouldThrowIfStockNegative() {
+    void testApplyStockChanges_shouldThrowIfStockNegative() throws InterruptedException {
         Product product = new Product().setId(1L).setStock(1).setName("Test");
         Map<Long, Product> productMap = Map.of(1L, product);
         Map<Long, Integer> diff = Map.of(1L, -2);
+
+        when(redissonClient.getLock(anyString())).thenReturn(rLock);
+        when(rLock.tryLock(3L, 5L, TimeUnit.SECONDS)).thenReturn(true);
 
         StoreRuntimeException ex = assertThrows(StoreRuntimeException.class,
                 () -> orderService.applyStockChanges(productMap, diff));
@@ -195,4 +213,5 @@ class OrderServiceTest {
 
         assertEquals(-2, result.get(1L));
     }
+
 }
