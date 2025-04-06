@@ -1,3 +1,9 @@
+networks:
+  store-suite:
+    external: false
+    driver: bridge
+    name: store-suite
+
 services:
 
   db:
@@ -8,6 +14,18 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    networks:
+      - store-suite
+  redis:
+    image: redis:7.2.4
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PORT: 6379
+      ALLOW_EMPTY_PASSWORD: yes
+    networks:
+      - store-suite
+
 
 #  meilisearch:
 #    image: getmeili/meilisearch:v1.12
@@ -16,10 +34,3 @@ services:
 #    ports:
 #      - "7700:7700"
 #
-  redis:
-      image: redis:7.2.4
-      ports:
-        - "6379:6379"
-      environment:
-        REDIS_PORT: 6379
-        ALLOW_EMPTY_PASSWORD: yes

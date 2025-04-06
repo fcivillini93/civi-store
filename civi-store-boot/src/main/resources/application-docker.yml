@@ -1,0 +1,16 @@
+# Server Properties
+server:
+  port: ${APPLICATION_PORT}
+  servlet:
+    context-path: ${APPLICATION_PATH}
+
+# Spring Jpa
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
