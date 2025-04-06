@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,9 @@ public class OrderRepositoryRdbms implements OrderRepository {
 
     @Override
     public List<OrderDao> findOrders(LocalDate date, Long userId, String description) throws StoreException {
-        return repositoryJpa.findOrders(date, userId, description).stream().map(o -> orderMapper.fromRdbms(o)).toList();
+        LocalDateTime startDate = date == null ? null : date.atStartOfDay();
+        LocalDateTime endDate = date == null ? null : date.plusDays(1).atStartOfDay();
+        return repositoryJpa.findOrders(startDate, endDate, userId, description).stream().map(o -> orderMapper.fromRdbms(o)).toList();
     }
 
     @Override

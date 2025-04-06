@@ -1,19 +1,50 @@
 package com.fcivillini.store_repository.repository;
 
-import com.fcivillini.store_repository.dao.ProductDao;
+    import com.fcivillini.store_repository.dao.ProductDao;
 
-import java.util.List;
-import java.util.Optional;
+    import java.util.List;
+    import java.util.Optional;
 
-public interface ProductRepository {
+    /**
+     * Repository interface for managing products.
+     */
+    public interface ProductRepository {
 
-    Optional<ProductDao> findById(Long id);
+        /**
+         * Finds a product by its ID.
+         *
+         * @param id the ID of the product to find
+         * @return an Optional containing the found product, or empty if not found
+         */
+        Optional<ProductDao> findById(Long id);
 
-    ProductDao save(ProductDao order);
+        /**
+         * Saves a new product.
+         *
+         * @param product the product to save
+         * @return the saved product
+         */
+        ProductDao save(ProductDao product);
 
-    List<ProductDao> saveAll(List<ProductDao> productList);
+        /**
+         * Saves a list of products.
+         *
+         * @param productList the list of products to save
+         * @return the list of saved products
+         */
+        List<ProductDao> saveAll(List<ProductDao> productList);
 
-    void deleteById(Long id);
+        /**
+         * Deletes a product by its ID.
+         *
+         * @param id the ID of the product to delete
+         */
+        void deleteById(Long id);
 
-    List<ProductDao> findAll();
-}
+        /**
+         * Finds all products.
+         *
+         * @return a list of all products
+         */
+        List<ProductDao> findAll();
+    }
