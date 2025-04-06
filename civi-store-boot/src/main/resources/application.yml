@@ -26,8 +26,8 @@ springdoc:
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/order_service
-    username: user
-    password: password
+    username: root
+    password: rootpassword
   jpa:
     hibernate:
       ddl-auto: update

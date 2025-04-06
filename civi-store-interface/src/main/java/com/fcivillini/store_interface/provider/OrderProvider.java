@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @OpenAPIDefinition(info = @Info(title = "Order API", version = "1.0", description = "API for managing orders"))
-@RequestMapping("/orders")
+@RequestMapping("/api/v1/orders")
 public interface OrderProvider {
 
     @Operation(summary = "Create a new order", description = "Creates a new order and returns the created order")

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public interface UserProvider {
 
     @Operation(summary = "Get a user by ID")
