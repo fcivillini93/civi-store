@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.fcivillini</groupId>
         <artifactId>civi-store-repository</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>civi-store-repository-rdbms</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
