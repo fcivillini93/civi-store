@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.fcivillini</groupId>
         <artifactId>civi-store-repository</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>civi-store-repository-interface</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <dependencies>
     </dependencies>

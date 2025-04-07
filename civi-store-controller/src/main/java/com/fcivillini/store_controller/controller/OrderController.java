@@ -8,6 +8,7 @@ import com.fcivillini.store_interface.provider.OrderProvider;
 import jakarta.validation.Valid;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,9 @@ import java.util.stream.Collectors;
 @RestController
 public class OrderController implements OrderProvider {
 
+    @Autowired
     private OrderService orderService;
+    @Autowired
     private OrderMapper orderMapper;
 
     @Override

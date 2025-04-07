@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
@@ -57,10 +56,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order) throws StoreException {
         log.info("Creating new order");
-        ;
-
         Map<Long, Product> productMap = order.getItems().stream()
                 .map(OrderItem::getProduct)
+                .map(p -> productMapper.fromDao(productRepository.findById(p.getId()).orElseThrow(() -> new StoreRuntimeException("Product not found", HttpStatus.NOT_FOUND))))
                 .collect(Collectors.toMap(Product::getId, p -> p));
         applyStockChanges(productMap, evaluateStockDiff(List.of(), order.getItems()));
         Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order.setOrderDate(LocalDateTime.now()))));
@@ -73,10 +71,19 @@ public class OrderServiceImpl implements OrderService {
         log.info("Start to update order with ID: [{}]", order.getId());
 
         Order storedOrder = this.findById(order.getId());
-
-        Map<Long, Product> productMap = Stream.concat(order.getItems().stream(), storedOrder.getItems().stream())
+        Map<Long, Product> productMap = storedOrder.getItems().stream()
                 .map(OrderItem::getProduct)
                 .collect(Collectors.toMap(Product::getId, p -> p, (p1, p2) -> p1));
+        order.getItems().forEach(orderItem -> {
+            Product product = orderItem.getProduct();
+            if (productMap.get(product.getId()) == null) {
+                productMap.put(
+                        product.getId(),
+                        productMapper.fromDao(productRepository.findById(product.getId()).orElseThrow(() -> new StoreRuntimeException("Product not found", HttpStatus.NOT_FOUND))))
+                ;
+            }
+        });
+
         applyStockChanges(productMap, evaluateStockDiff(storedOrder.getItems(), order.getItems()));
         Order saved = orderMapper.fromDao(orderRepository.save(orderMapper.toDao(order.setOrderDate(LocalDateTime.now()))));
         log.info("End to update order with ID: {}", saved.getId());

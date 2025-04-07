@@ -2,11 +2,10 @@ package com.fcivillini.store_interface.provider;
 
 import com.fcivillini.store_interface.dto.OrderDto;
 import com.fcivillini.store_interface.exc.StoreException;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@OpenAPIDefinition(info = @Info(title = "Order API", version = "1.0", description = "API for managing orders"))
 @RequestMapping("/api/v1/orders")
+@Tag(name = "Order", description = "API for managing orders")
 public interface OrderProvider {
 
     @Operation(summary = "Create a new order", description = "Creates a new order and returns the created order")

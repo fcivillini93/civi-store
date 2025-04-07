@@ -110,27 +110,34 @@ class OrderServiceTest {
 
     @Test
     void testSave() throws StoreException, InterruptedException {
+        ProductDao productDao = new ProductDao().setId(1L).setStock(10);
         Product product = new Product().setId(1L).setStock(10);
-        OrderItem item = new OrderItem().setProduct(product).setQuantity(2);
+        OrderItem item = new OrderItem().setProduct(new Product().setId(1L)).setQuantity(2);
         Order order = new Order().setItems(List.of(item));
         OrderDao dao = new OrderDao();
         OrderDao savedDao = new OrderDao();
         Order savedOrder = new Order();
 
-        when(orderMapper.toDao(order)).thenReturn(dao);
+        when(orderMapper.toDao(any())).thenReturn(dao);
         when(orderRepository.save(dao)).thenReturn(savedDao);
         when(orderMapper.fromDao(savedDao)).thenReturn(savedOrder);
-        when(productMapper.toDao(any())).thenReturn(new ProductDao());
-        when(productMapper.fromDao(any())).thenReturn(product);
-        when(productRepository.saveAll(any())).thenReturn(List.of(new ProductDao()));
-        when(redissonClient.getLock(anyString())).thenReturn(rLock);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(productDao));
+        when(productMapper.fromDao(productDao)).thenReturn(product);
+        when(productMapper.toDao(any())).thenReturn(productDao);
+        when(productRepository.saveAll(any())).thenReturn(List.of(productDao));
+
+        when(redissonClient.getLock("lock:product:1")).thenReturn(rLock);
         when(rLock.tryLock(3L, 5L, TimeUnit.SECONDS)).thenReturn(true);
+
         Order result = orderService.save(order);
 
         assertEquals(savedOrder, result);
         verify(orderRepository).save(dao);
+        verify(productRepository).findById(1L);
         verify(productRepository).saveAll(any());
     }
+
 
     @Test
     void testUpdate() throws StoreException, InterruptedException {

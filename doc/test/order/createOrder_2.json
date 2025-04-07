@@ -1,0 +1,21 @@
+{
+  "user": {
+    "id": 2
+  },
+  "status": "PENDING",
+  "items": [
+    {
+      "product": {
+        "id": 3
+      },
+      "quantity": 20
+    },
+    {
+      "product": {
+        "id": 4
+      },
+      "quantity": 15
+    }
+  ],
+  "description": "second order"
+}
